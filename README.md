@@ -1,15 +1,29 @@
 #EDAF75 Database Project
 
+This is the report for
+
++ Vilhelm Åkerström, dat15vak
++ Emil Ahlberg, har12eah
++ Ola Johansson, jur10ojo
+
+We solved this project on our own, except for:
+
++ The Peer-review meeting
+
 ![Database design uml](databas_design.png)
 
-Relations:
+<center>
+    <img src="er-model.png" width="100%">
+</center>
 
-+ recipes(\_bar_code\_, name)
-+ customers(\_customer_name\_, address)
-+ raw_materials(\_ingredient_name\_, balance, unit, update_date, update_amount)
-+ recipe_entries(amount, *\_bar_code\_*, *\_ingredient_name\_*)
-+ orders(\_order_id\_, order_date, delivery_date, *\_customer_name\_*)
-+ pallets(\_pallet_nbr\_, *\_bar_code\_*, pallet_time, pallet_date, is_blocked, *\_order_id\_*)
-+ order_spec(*\_bar_code\_*, *\_order_id\_*, quantity)
+## Relations:
+
++ recipes(**bar_code**, name)
++ customers(**customer_name**, address)
++ raw_materials(**ingredient_name**, balance, unit, update_date, update_amount)
++ recipe_entries(amount, **_bar\_code_**, **_ingredient\_name_**)
++ orders(**order_id**, order_date, delivery_date, **_customer\_name_**)
++ pallets(**pallet_nbr**, **_bar\_code_**, pallet_time, pallet_date, is_blocked, **_order\_id_**)
++ order_spec(**_bar\_code_**, **_order\_id_**, quantity)
 
 [Link to the repository](https://github.com/VilhelmA/EDAF75_Project)
