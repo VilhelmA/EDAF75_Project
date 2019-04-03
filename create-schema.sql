@@ -21,7 +21,9 @@ CREATE TABLE raw_materials(
     unit            TEXT,
     update_date     DATE,
     update_amount   INT,
-    PRIMARY KEY (ingredient_name)
+    PRIMARY KEY (ingredient_name),
+    CONSTRAINT non_neg CHECK (balance >= 0)
+                    ON CONFLICT ROLLBACK
 );
 
 DROP TABLE IF EXISTS recipe_entries;
@@ -67,3 +69,21 @@ CREATE TABLE order_spec(
     FOREIGN KEY (bar_code) REFERENCES recipes (bar_code),
     FOREIGN KEY (order_id) REFERENCES orders (order_id)
 );
+
+DROP TRIGGER IF EXISTS update_balances;
+CREATE TRIGGER update_balances
+AFTER INSERT ON pallets
+BEGIN
+    DROP VIEW IF EXISTS pallet_amount;
+    CREATE VIEW pallet_amount AS
+    SELECT ingredient_name, amount*20*10
+    FROM recipe_entries
+    JOIN raw_materials
+    USING ingredient_name;
+
+    UPDATE raw_materials
+    SET balance = balance -
+        (SELECT pallet_amount.amount
+         FROM pallet_amount
+         WHERE pallet_amount.ingredient_name = raw_materials.ingredient_name)
+END;
