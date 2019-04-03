@@ -94,9 +94,16 @@ def pallets():
     c = conn.cursor()
     c.execute('PRAGMA foreign_keys=ON') #needed?
     # 15 cookies/bag, 10 bags/box,  36 boxes/pallet
+    c.execute("
+        """
+        SELECT name
+        FROM recipe
+        
+        """)
+
     for row in c.execute(
         """
-        SELECT  ingredient_name, amount*15*10*36 > balance AS inStock
+        SELECT  ingredient_name, amount*15*10*36/100 > balance AS inStock
         FROM    recipes
         JOIN    recipe_entries
         USING   (bar_code)
@@ -105,9 +112,8 @@ def pallets():
         WHERE   name=?
         """, [queryDict.get('cookie')]
     ):
-
-        print(row)
-
+        if (row[1] != 1):
+            return format_response({"status": "not enough ingredients"})
     try:
         # for row in c.execute(
         #     """
