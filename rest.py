@@ -40,6 +40,21 @@ def customers():
     response.status = 200
     return format_response({"customers": res})
 
+@get('/raw_materials')
+def materials():
+    response.content_type = 'application/json'
+    c = conn.cursor()
+    c.execute(
+        """
+        SELECT  ingredient_name, balance
+        FROM    raw_materials
+        """
+    )
+    res = [{"name": ingredient_name, "balance": balance}
+        for (ingredient_name, balance) in c]
+    response.status = 200
+    return format_response({"materials": res})
+
 @get('/ingredients')
 def ingredients():
     response.content_type = 'application/json'
@@ -61,7 +76,7 @@ def cookies():
     c = conn.cursor()
     c.execute(
         """
-        SELECT name 
+        SELECT name
         FROM recipes
         ORDER BY name DESC
         """
@@ -83,7 +98,7 @@ def recipes():
         USING   (bar_code)
         JOIN    raw_materials
         USING   (ingredient_name)
-        ORDER BY name ASC, ingredient_name ASC 
+        ORDER BY name ASC, ingredient_name ASC
         """
     )
     res = [{"cookie": name, "ingredient": ingredient_name, "quantity": amount, "unit": unit}
@@ -104,6 +119,23 @@ def pallets():
     #
     #     """)
 
+    c.execute(
+        """
+        SELECT name, bar_code
+        FROM recipes
+        WHERE name=?
+        """, [queryDict.get('cookie')]
+        )
+
+    result = c.fetchall()
+    print(result)
+    bar_code = result[0][1]
+    date = datetime.date
+    time = datetime.time
+
+    if len(result) < 1:
+        print("no such cookie")
+        return format_response({"status": "no such cookie"})
     for row in c.execute(
         """
         SELECT  ingredient_name, amount*15*10*36/100 < balance AS inStock
@@ -118,17 +150,18 @@ def pallets():
         if (row[1] != 1):
             return format_response({"status": "not enough ingredients"})
     try:
-         for row in c.execute(
-             """
-        
-             INSERT INTO pallets (bar_code, pallet_time, pallet_date, is_blocked)
-             VALUES 	(?, ?, ?, ?);
+        print("before exec")
+        c.execute(
+        """
+            INSERT INTO pallets (bar_code, pallet_time, pallet_date, is_blocked)
+            VALUES 	(?, ?, ?, ?)
 
-             """, [bar_code, str(datetime.datetime.now().time()), str(datetime.datetime.now().date()), 0]
-         ):
-            return ("/pallets/%s"   % id)
-    except sqlite3.IntegrityError:
-        return ("Error")
+        """, [int(bar_code), str(datetime.datetime.now().time()), str(datetime.datetime.now().date()), 0]
+        )
+        print("after exec")
+        return ("/pallets/%s"   % id)
+    except sqlite3.IntegrityError as error:
+        return (error)
 
 @post('/block/<cookie_name>/<from_date>/<to_date>')
 def block(cookie_name, from_date, to_date):
@@ -156,24 +189,24 @@ def block(cookie_name, from_date, to_date):
 @post('/unblock/<cookie_name>/<from_date>/<to_date>')
 def unblock(cookie_name, from_date, to_date):
     print(cookie_name, from_date, to_date)
-        c.execute(
-        """
-        WITH corresponding_code AS (
-            SELECT  bar_code
-            FROM    recipes
-            WHERE   name= ?
-        ),
-        bad_pallets AS (
-            SELECT  pallet_nbr
-            FROM    pallets
-            WHERE   pallet_date BETWEEN ? AND ?
-                    AND bar_code IN (SELECT bar_code FROM corresponding_code)
-        )
-        UPDATE  pallets
-        SET     isBlocked = 0
-        WHERE   pallet_nbr IN (SELECT pallet_nbr FROM bad_pallets)
-        """, [cookie_name,from_date, to_date]
-        )
+    c.execute(
+    """
+    WITH corresponding_code AS (
+        SELECT  bar_code
+        FROM    recipes
+        WHERE   name= ?
+    ),
+    bad_pallets AS (
+        SELECT  pallet_nbr
+        FROM    pallets
+        WHERE   pallet_date BETWEEN ? AND ?
+                AND bar_code IN (SELECT bar_code FROM corresponding_code)
+    )
+    UPDATE  pallets
+    SET     isBlocked = 0
+    WHERE   pallet_nbr IN (SELECT pallet_nbr FROM bad_pallets)
+    """, [cookie_name,from_date, to_date]
+    )
     return format_response({"status": "ok"})
 
 
