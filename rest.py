@@ -2,6 +2,7 @@ from bottle import get, post, run, request, response, route
 import sqlite3
 import json
 import string
+import datetime
 from random import *
 databaseFile = "applications.sqlite"
 resetCode="resetAndInit.txt"
@@ -96,16 +97,26 @@ def pallets():
     c = conn.cursor()
     c.execute('PRAGMA foreign_keys=ON') #needed?
     # 15 cookies/bag, 10 bags/box,  36 boxes/pallet
-    c.execute("
+    c.execute(
         """
-        SELECT name
-        FROM recipe
-        
-        """)
+        SELECT name, bar_code
+        FROM recipes
+        WHERE name=? 
+        """, [queryDict.get('cookie')]
+        )
+
+    result = c.fetchall()
+    bar_code = result[0][1]
+    date = datetime.date
+    time = datetime.time
+    
+    if len(result) < 1:
+        print("no such cookie")
+        return format_response({"status": "no such cookie"})
 
     for row in c.execute(
         """
-        SELECT  ingredient_name, amount*15*10*36/100 > balance AS inStock
+        SELECT  ingredient_name, amount*15*10*36/100 < balance AS inStock
         FROM    recipes
         JOIN    recipe_entries
         USING   (bar_code)
@@ -117,14 +128,15 @@ def pallets():
         if (row[1] != 1):
             return format_response({"status": "not enough ingredients"})
     try:
-        # for row in c.execute(
-        #     """
-        #
-        #     INSERT INTO pallets (performanceid, name, ticketid)
-        #     VALUES 	(?, ?, ?)
-        #     """, [queryDict.get('cookie')]
-        # )
-        return ("/pallets/%s"   % id)
+         for row in c.execute(
+             """
+        
+             INSERT INTO pallets (bar_code, pallet_time, pallet_date, is_blocked)
+             VALUES 	(?, ?, ?, ?);
+
+             """, [bar_code, str(datetime.datetime.now().time()), str(datetime.datetime.now().date()), 0]
+         ):
+            return ("/pallets/%s"   % id)
     except sqlite3.IntegrityError:
         return ("Error")
 

@@ -46,12 +46,13 @@ CREATE TABLE orders(
 
 DROP TABLE IF EXISTS pallets;
 CREATE TABLE pallets(
-    pallet_nbr  INT,
+
+    pallet_nbr  TEXT DEFAULT (lower(hex(randomblob(16)))),
     bar_code    INT,
     pallet_time TIME,
     pallet_date DATE,
     is_blocked  INT,
-    order_id    INT,
+    order_id    INT DEFAULT -1,
     PRIMARY KEY (pallet_nbr),
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (bar_code)  REFERENCES recipes(bar_code)
