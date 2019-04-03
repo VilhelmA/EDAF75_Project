@@ -49,7 +49,7 @@ def ingredients():
         FROM    raw_materials
         """
     )
-    res = [{"type": type, "quantity": balance, "unit": unit}
+    res = [{"name": type, "quantity": balance, "unit": unit}
         for (type, balance, unit) in c]
     response.status = 200
     return format_response({"ingredients": res})
@@ -93,9 +93,7 @@ def pallets():
     queryDict = request.query
     c = conn.cursor()
     c.execute('PRAGMA foreign_keys=ON') #needed?
-
     # 15 cookies/bag, 10 bags/box,  36 boxes/pallet
-
     for row in c.execute(
         """
         SELECT  ingredient_name, amount*15*10*36 > balance AS inStock
