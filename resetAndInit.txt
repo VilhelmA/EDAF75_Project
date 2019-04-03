@@ -1,0 +1,86 @@
+TODO:   Write this file as an sql script:
+        1. delete all data from tables (DELETE * FROM x).
+        2. insert values into tables, according to text below.
+
+
+Customers (name, address):
+
+    Finkakor AB, Helsingborg
+    Småbröd AB, Malmö
+    Kaffebröd AB, Landskrona
+    Bjudkakor AB, Ystad
+    Kalaskakor AB, Trelleborg
+    Partykakor AB, Kristianstad
+    Gästkakor AB, Hässleholm
+    Skånekakor AB, Perstorp
+
+Cookies (name):
+
+    Nut ring
+    Nut cookie
+    Amneris
+    Tango
+    Almond delight
+    Berliner
+
+Ingredients (name, quantity in stock, unit):
+
+    Flour, 100 000, g
+    Butter, 100 000, g
+    Icing sugar, 100 000, g
+    Roasted, chopped nuts, 100 000, g
+    Fine-ground nuts, 100 000, g
+    Ground, roasted nuts, 100 000, g
+    Bread crumbs, 100 000, g
+    Sugar, 100 000, g
+    Egg whites, 100 000, ml
+    Chocolate, 100 000, g
+    Marzipan, 100 000, g
+    Eggs, 100 000, g
+    Potato starch, 100 000, g
+    Wheat flour, 100 000, g
+    Sodium bicarbonate, 100 000, g
+    Vanilla, 100 000, g
+    Chopped almonds, 100 000, g
+    Cinnamon, 100 000, g
+    Vanilla sugar, 100 000, g
+
+Recipes (per batch of 100 cookies -- note that there are quite a few cookies in a pallet):
+
+    Nut ring (ingredient, quantity):
+        Flour, 450
+        Butter, 450
+        Icing sugar, 190
+        Roasted, chopped nuts, 225
+    Nut cookie (ingredient, quantity):
+        Fine-ground nuts, 750
+        Ground, roasted nuts, 625
+        Bread crumbs, 125
+        Sugar, 375
+        Egg whites, 350
+        Chocolate, 50
+    Amneris (ingredient, quantity):
+        Marzipan, 750
+        Butter, 250
+        Eggs, 250
+        Potato starch, 25
+        Wheat flour, 25
+    Tango (ingredient, quantity):
+        Butter, 200
+        Sugar, 250
+        Flour, 300
+        Sodium bicarbonate, 4
+        Vanilla, 2
+    Almond delight (ingredient, quantity):
+        Butter, 400
+        Sugar, 270
+        Chopped almonds, 279
+        Flour, 400
+        Cinnamon, 10
+    Berliner (ingredient, quantity):
+        Flour, 350
+        Butter, 250
+        Icing sugar, 100
+        Eggs, 50
+        Vanilla sugar, 5
+        Chocolate, 50
