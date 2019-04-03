@@ -38,7 +38,7 @@ DROP TABLE IF EXISTS orders;
 CREATE TABLE orders(
     order_id        INT,
     order_date      DATE,
-    delivered       INT,
+    delivery_date   DATE,
     customer_name   TEXT,
     PRIMARY KEY (order_id),
     FOREIGN KEY (customer_name) REFERENCES customers(customer_name)
@@ -48,8 +48,8 @@ DROP TABLE IF EXISTS pallets;
 CREATE TABLE pallets(
     pallet_nbr  INT,
     bar_code    INT,
-    time        TIME,
-    date        DATE,
+    pallet_time TIME,
+    pallet_date DATE,
     is_blocked  INT,
     order_id    INT,
     PRIMARY KEY (pallet_nbr),
