@@ -15,8 +15,8 @@ def pong():
 @post('/reset')
 def resetDatabase():
     print('RESET!')
-    open(databaseFile, 'w').close()
-    conn = sqlite3.connect(databaseFile)
+    #open(databaseFile, 'w').close()
+    #conn = sqlite3.connect(databaseFile)
     c = conn.cursor()
     data = ""
     with open('resetAndInit.txt', 'r') as myfile:

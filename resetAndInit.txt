@@ -9,7 +9,7 @@ DELETE FROM order_spec;
 
 INSERT INTO customers (customer_name, address)
 VALUES  ("Finkakor AB", "Helsingborg"),
-        ("Småbröd AB", "Malmö""),
+        ("Småbröd AB", "Malmö"),
         ("Kaffebröd AB", "Landskrona"),
         ("Bjudkakor AB", "Ystad"),
         ("Kalaskakor AB", "Trelleborg"),
@@ -25,26 +25,26 @@ VALUES  (1, "Nut ring"),
         (5, "Almond delight"),
         (6, "Berliner");
 
-INSERT INTO raw_materials (name, balance, unit)
-VALUES  ("Flour", 100 000, "g"),
-        ("Butter", 100 000, "g"),
-        ("Icing sugar", 100 000, "g"),
-        ("Roasted, chopped nuts", 100 000, "g"),
-        ("Fine-ground nuts", 100 000, "g"),
-        ("Ground, roasted nuts", 100 000, "g"),
-        ("Bread crumbs", 100 000, "g"),
-        ("Sugar", 100 000, "g"),
-        ("Egg whites", 100 000, "ml"),
-        ("Chocolate", 100 000, "g"),
-        ("Marzipan", 100 000, "g"),
-        ("Eggs", 100 000, "g"),
-        ("Potato starch", 100 000, "g"),
-        ("Wheat flour", 100 000, "g"),
-        ("Sodium bicarbonate", 100 000, "g"),
-        ("Vanilla", 100 000, "g"),
-        ("Chopped almonds", 100 000, "g"),
-        ("Cinnamon", 100 000, "g"),
-        ("Vanilla sugar", 100 000, "g");
+INSERT INTO raw_materials (ingredient_name, balance, unit)
+VALUES  ("Flour", 100000, "g"),
+        ("Butter", 100000, "g"),
+        ("Icing sugar", 100000, "g"),
+        ("Roasted, chopped nuts", 100000, "g"),
+        ("Fine-ground nuts", 100000, "g"),
+        ("Ground, roasted nuts", 100000, "g"),
+        ("Bread crumbs", 100000, "g"),
+        ("Sugar", 100000, "g"),
+        ("Egg whites", 100000, "ml"),
+        ("Chocolate", 100000, "g"),
+        ("Marzipan", 100000, "g"),
+        ("Eggs", 100000, "g"),
+        ("Potato starch", 100000, "g"),
+        ("Wheat flour", 100000, "g"),
+        ("Sodium bicarbonate", 100000, "g"),
+        ("Vanilla", 100000, "g"),
+        ("Chopped almonds", 100000, "g"),
+        ("Cinnamon", 100000, "g"),
+        ("Vanilla sugar", 100000, "g");
 
 -- Recipes (per batch of 100 cookies, note that there are quite a few cookies in a pallet):
 INSERT INTO recipe_entries (bar_code, ingredient_name, amount)
