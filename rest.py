@@ -60,9 +60,9 @@ def cookies():
     c = conn.cursor()
     c.execute(
         """
-        SELECT  name
-        FROM    cookies
-        ORDER   name DESC
+        SELECT name 
+        FROM recipes
+        ORDER BY name DESC
         """
     )
     res = [{"name": name}
@@ -80,7 +80,9 @@ def recipes():
         FROM    recipes
         JOIN    recipe_entries
         USING   (bar_code)
-        ORDER   name DESC, ingredient_name DESC
+        JOIN    raw_materials
+        USING   (ingredient_name)
+        ORDER BY name ASC, ingredient_name ASC 
         """
     )
     res = [{"cookie": name, "ingredient": ingredient_name, "quantity": amount, "unit": unit}
