@@ -25,7 +25,7 @@ def resetDatabase():
     c.executescript(data)
 
 @get('/customers')
-def pong():
+def customers():
     response.content_type = 'application/json'
     c = conn.cursor()
     c.execute(
@@ -37,7 +37,7 @@ def pong():
     res = [{"name": name, "address": address}
         for (name, address) in c]
     response.status = 200
-    return format_response({"data": res})
+    return format_response({"customers": res})
 
 @get('/ingredients')
 def ingredients():
@@ -45,14 +45,14 @@ def ingredients():
     c = conn.cursor()
     c.execute(
         """
-        SELECT  type, balance, unit
-        FROM    inventory
+        SELECT  ingredient_name, balance, unit
+        FROM    raw_materials
         """
     )
     res = [{"type": type, "quantity": balance, "unit": unit}
         for (type, balance, unit) in c]
     response.status = 200
-    return format_response({"data": res})
+    return format_response({"ingredients": res})
 
 @get('/cookies')
 def cookies():
@@ -68,7 +68,7 @@ def cookies():
     res = [{"name": name}
         for (name) in c]
     response.status = 200
-    return format_response({"data": res})
+    return format_response({"cookies": res})
 
 @get('/recipes')
 def recipes():
@@ -76,17 +76,17 @@ def recipes():
     c = conn.cursor()
     c.execute(
         """
-        SELECT  name, type, quantity, unit
-        FROM    cookies
-        JOIN    inventory
-        USING   (X)
-        ORDER   name DESC, type DESC
+        SELECT  name, ingredient_name, amount, unit
+        FROM    recipes
+        JOIN    recipe_entries
+        USING   (bar_code)
+        ORDER   name DESC, ingredient_name DESC
         """
     )
-    res = [{"cookie": name, "ingredient": type, "quantity": balance, "unit": unit}
-        for (name) in c]
+    res = [{"cookie": name, "ingredient": ingredient_name, "quantity": amount, "unit": unit}
+        for (name, ingredient_name, amount, unit) in c]
     response.status = 200
-    return format_response({"data": res})
+    return format_response({"recipes": res})
 
 @post('/pallets')
 def pallets():
@@ -122,5 +122,10 @@ def pallets():
     except sqlite3.IntegrityError:
         return ("Error")
 
+def url(resource):
+    return "http://{HOST}:{PORT}{resource}"
+
+def format_response(d):
+    return json.dumps(d, indent=4) + "\n"
 
 run(host='localhost', port=8888, debug = True)
