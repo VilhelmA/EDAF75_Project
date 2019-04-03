@@ -1,4 +1,4 @@
-#EDAF75 Database Project
+# EDAF75 Database Project
 
 This is the report for
 
