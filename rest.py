@@ -94,12 +94,12 @@ def pallets():
     c = conn.cursor()
     c.execute('PRAGMA foreign_keys=ON') #needed?
     # 15 cookies/bag, 10 bags/box,  36 boxes/pallet
-    c.execute("
-        """
-        SELECT name
-        FROM recipe
-        
-        """)
+    # c.execute("
+    #     """
+    #     SELECT name
+    #     FROM recipe
+    #
+    #     """)
 
     for row in c.execute(
         """
@@ -125,6 +125,53 @@ def pallets():
         return ("/pallets/%s"   % id)
     except sqlite3.IntegrityError:
         return ("Error")
+
+@post('/block/<cookie_name>/<from_date>/<to_date>')
+def block(cookie_name, from_date, to_date):
+    print(cookie_name, from_date, to_date)
+    c.execute(
+    """
+    WITH corresponding_code AS (
+        SELECT  bar_code
+        FROM    recipes
+        WHERE   name= ?
+    ),
+    bad_pallets AS (
+        SELECT  pallet_nbr
+        FROM    pallets
+        WHERE   pallet_date BETWEEN ? AND ?
+                AND bar_code IN (SELECT bar_code FROM corresponding_code)
+    )
+    UPDATE  pallets
+    SET     isBlocked = 1
+    WHERE   pallet_nbr IN (SELECT pallet_nbr FROM bad_pallets)
+    """, [cookie_name,from_date, to_date]
+    )
+    return format_response({"status": "ok"})
+
+@post('/unblock/<cookie_name>/<from_date>/<to_date>')
+def unblock(cookie_name, from_date, to_date):
+    print(cookie_name, from_date, to_date)
+        c.execute(
+        """
+        WITH corresponding_code AS (
+            SELECT  bar_code
+            FROM    recipes
+            WHERE   name= ?
+        ),
+        bad_pallets AS (
+            SELECT  pallet_nbr
+            FROM    pallets
+            WHERE   pallet_date BETWEEN ? AND ?
+                    AND bar_code IN (SELECT bar_code FROM corresponding_code)
+        )
+        UPDATE  pallets
+        SET     isBlocked = 0
+        WHERE   pallet_nbr IN (SELECT pallet_nbr FROM bad_pallets)
+        """, [cookie_name,from_date, to_date]
+        )
+    return format_response({"status": "ok"})
+
 
 def url(resource):
     return "http://{HOST}:{PORT}{resource}"
