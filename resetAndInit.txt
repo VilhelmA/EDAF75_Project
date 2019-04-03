@@ -1,86 +1,87 @@
-TODO:   Write this file as an sql script:
-        1. delete all data from tables (DELETE * FROM x).
-        2. insert values into tables, according to text below.
+DELETE FROM recipes;
+DELETE FROM customers;
+DELETE FROM raw_materials;
+DELETE FROM recipe_entries;
+DELETE FROM orders;
+DELETE FROM pallets;
+DELETE FROM customers;
+DELETE FROM order_spec;
 
+INSERT INTO customers (customer_name, address)
+VALUES  ("Finkakor AB", "Helsingborg"),
+        ("Småbröd AB", "Malmö""),
+        ("Kaffebröd AB", "Landskrona"),
+        ("Bjudkakor AB", "Ystad"),
+        ("Kalaskakor AB", "Trelleborg"),
+        ("Partykakor AB", "Kristianstad"),
+        ("Gästkakor AB", "Hässleholm"),
+        ("Skånekakor AB", "Perstorp");
 
-Customers (name, address):
+INSERT INTO recipes (bar_code, name)
+VALUES  (1, "Nut ring"),
+        (2, "Nut cookie"),
+        (3, "Amneris"),
+        (4, "Tango"),
+        (5, "Almond delight"),
+        (6, "Berliner");
 
-    Finkakor AB, Helsingborg
-    Småbröd AB, Malmö
-    Kaffebröd AB, Landskrona
-    Bjudkakor AB, Ystad
-    Kalaskakor AB, Trelleborg
-    Partykakor AB, Kristianstad
-    Gästkakor AB, Hässleholm
-    Skånekakor AB, Perstorp
+INSERT INTO raw_materials (name, balance, unit)
+VALUES  ("Flour", 100 000, "g"),
+        ("Butter", 100 000, "g"),
+        ("Icing sugar", 100 000, "g"),
+        ("Roasted, chopped nuts", 100 000, "g"),
+        ("Fine-ground nuts", 100 000, "g"),
+        ("Ground, roasted nuts", 100 000, "g"),
+        ("Bread crumbs", 100 000, "g"),
+        ("Sugar", 100 000, "g"),
+        ("Egg whites", 100 000, "ml"),
+        ("Chocolate", 100 000, "g"),
+        ("Marzipan", 100 000, "g"),
+        ("Eggs", 100 000, "g"),
+        ("Potato starch", 100 000, "g"),
+        ("Wheat flour", 100 000, "g"),
+        ("Sodium bicarbonate", 100 000, "g"),
+        ("Vanilla", 100 000, "g"),
+        ("Chopped almonds", 100 000, "g"),
+        ("Cinnamon", 100 000, "g"),
+        ("Vanilla sugar", 100 000, "g");
 
-Cookies (name):
-
-    Nut ring
-    Nut cookie
-    Amneris
-    Tango
-    Almond delight
-    Berliner
-
-Ingredients (name, quantity in stock, unit):
-
-    Flour, 100 000, g
-    Butter, 100 000, g
-    Icing sugar, 100 000, g
-    Roasted, chopped nuts, 100 000, g
-    Fine-ground nuts, 100 000, g
-    Ground, roasted nuts, 100 000, g
-    Bread crumbs, 100 000, g
-    Sugar, 100 000, g
-    Egg whites, 100 000, ml
-    Chocolate, 100 000, g
-    Marzipan, 100 000, g
-    Eggs, 100 000, g
-    Potato starch, 100 000, g
-    Wheat flour, 100 000, g
-    Sodium bicarbonate, 100 000, g
-    Vanilla, 100 000, g
-    Chopped almonds, 100 000, g
-    Cinnamon, 100 000, g
-    Vanilla sugar, 100 000, g
-
-Recipes (per batch of 100 cookies -- note that there are quite a few cookies in a pallet):
-
-    Nut ring (ingredient, quantity):
-        Flour, 450
-        Butter, 450
-        Icing sugar, 190
-        Roasted, chopped nuts, 225
-    Nut cookie (ingredient, quantity):
-        Fine-ground nuts, 750
-        Ground, roasted nuts, 625
-        Bread crumbs, 125
-        Sugar, 375
-        Egg whites, 350
-        Chocolate, 50
-    Amneris (ingredient, quantity):
-        Marzipan, 750
-        Butter, 250
-        Eggs, 250
-        Potato starch, 25
-        Wheat flour, 25
-    Tango (ingredient, quantity):
-        Butter, 200
-        Sugar, 250
-        Flour, 300
-        Sodium bicarbonate, 4
-        Vanilla, 2
-    Almond delight (ingredient, quantity):
-        Butter, 400
-        Sugar, 270
-        Chopped almonds, 279
-        Flour, 400
-        Cinnamon, 10
-    Berliner (ingredient, quantity):
-        Flour, 350
-        Butter, 250
-        Icing sugar, 100
-        Eggs, 50
-        Vanilla sugar, 5
-        Chocolate, 50
+-- Recipes (per batch of 100 cookies, note that there are quite a few cookies in a pallet):
+INSERT INTO recipe_entries (bar_code, ingredient_name, amount)
+VALUES  --Nut ring (ingredient, quantity):
+        (1, "Flour", 450),
+        (1, "Butter", 450),
+        (1, "Icing sugar", 190),
+        (1, "Roasted, chopped nuts", 225),
+        --Nut cookie
+        (2, "Fine-ground nuts", 750),
+        (2, "Ground, roasted nuts", 625),
+        (2, "Bread crumbs", 125),
+        (2, "Sugar", 375),
+        (2, "Egg whites", 350),
+        (2, "Chocolate", 50),
+        --Amneris
+        (3, "Marzipan", 750),
+        (3, "Butter", 250),
+        (3, "Eggs", 250),
+        (3, "Potato starch", 25),
+        (3, "Wheat flour", 25),
+        --Tango
+        (4, "Butter", 200),
+        (4, "Sugar", 250),
+        (4, "Flour", 300),
+        (4, "Sodium bicarbonate", 4),
+        (4, "Vanilla", 2),
+        --Almond delight
+        (5, "Butter", 400),
+        (5, "Sugar", 270),
+        (5, "Chopped almonds", 279),
+        (5, "Flour", 400),
+        (5, "Cinnamon", 10),
+        --Berliner
+        (6, "Flour", 350),
+        (6, "Butter", 250),
+        (6, "Icing sugar", 100),
+        (6, "Eggs", 50),
+        (6, "Vanilla sugar", 5),
+        (6, "Chocolate", 50);
