@@ -12,10 +12,6 @@ We solved this project on our own, except for:
 
 ![Database design uml](databas_design.png)
 
-<center>
-    <img src="databas_design.png" width="100%">
-</center>
-
 ## Relations:
 
 + recipes(**bar_code**, name)
