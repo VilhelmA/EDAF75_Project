@@ -10,7 +10,7 @@ We solved this project on our own, except for:
 
 + The Peer-review meeting
 
-![Database design uml](databas_design.png)
+![Database design UML](databas_design.png)
 
 ## Relations:
 
