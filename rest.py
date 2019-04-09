@@ -195,9 +195,9 @@ def get_pallets():
     if cookie_var== None:
         cookie_var = "%"
     if before_var == None:
-        before_var = "0000-00-00"
+        before_var = str(datetime.datetime.now().date())
     if after_var== None:
-        after_var = str(datetime.datetime.now().date())
+        after_var = "0000-00-00"
 
     c.execute(
         """
@@ -219,6 +219,7 @@ def get_pallets():
 @post('/block/<cookie_name>/<from_date>/<to_date>')
 def block(cookie_name, from_date, to_date):
     print(cookie_name, from_date, to_date)
+    c = conn.cursor()
     c.execute(
     """
     WITH corresponding_code AS (
@@ -233,7 +234,7 @@ def block(cookie_name, from_date, to_date):
                 AND bar_code IN (SELECT bar_code FROM corresponding_code)
     )
     UPDATE  pallets
-    SET     isBlocked = 1
+    SET     is_blocked = 1
     WHERE   pallet_nbr IN (SELECT pallet_nbr FROM bad_pallets)
     """, [cookie_name,from_date, to_date]
     )
@@ -242,6 +243,7 @@ def block(cookie_name, from_date, to_date):
 @post('/unblock/<cookie_name>/<from_date>/<to_date>')
 def unblock(cookie_name, from_date, to_date):
     print(cookie_name, from_date, to_date)
+    c = conn.cursor()
     c.execute(
     """
     WITH corresponding_code AS (
@@ -256,7 +258,7 @@ def unblock(cookie_name, from_date, to_date):
                 AND bar_code IN (SELECT bar_code FROM corresponding_code)
     )
     UPDATE  pallets
-    SET     isBlocked = 0
+    SET     is_blocked = 0
     WHERE   pallet_nbr IN (SELECT pallet_nbr FROM bad_pallets)
     """, [cookie_name,from_date, to_date]
     )
