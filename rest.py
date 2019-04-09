@@ -129,13 +129,13 @@ def pallets():
 
     result = c.fetchall()
     print(result)
-    bar_code = result[0][1]
     date = datetime.date
     time = datetime.time
 
     if len(result) < 1:
         print("no such cookie")
         return format_response({"status": "no such cookie"})
+    bar_code = result[0][1]
     for row in c.execute(
         """
         SELECT  ingredient_name, amount*15*10*36/100 < balance AS inStock
@@ -153,13 +153,16 @@ def pallets():
         print("before exec")
         c.execute(
         """
-            INSERT INTO pallets (bar_code, pallet_time, pallet_date, is_blocked)
+            INSERT
+            INTO pallets (bar_code, pallet_time, pallet_date, is_blocked)
             VALUES 	(?, ?, ?, ?)
+            OUTPUT INSERTED.*;
 
         """, [int(bar_code), str(datetime.datetime.now().time()), str(datetime.datetime.now().date()), 0]
         )
         print("after exec")
-        return ("/pallets/%s"   % id)
+        print(c.fetchall)
+        return format_response({"status": "OK", })
     except sqlite3.IntegrityError as error:
         return (error)
 
