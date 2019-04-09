@@ -170,6 +170,25 @@ def pallets():
     except sqlite3.IntegrityError as error:
         return (error)
 
+@get('/pallets')
+def get_pallets():
+    c = conn.cursor()
+    c.execute(
+        """
+            SELECT pallet_nbr, name, pallet_date, customer_name, is_blocked 
+            FROM pallets
+            JOIN recipes 
+            USING (bar_code)
+            LEFT JOIN orders
+            USING (order_id)
+        """
+    )
+    res = [{"id": pallet_nbr, "cookie": name, "productionDate": pallet_date, "customer": customer_name, "blocked": is_blocked }
+        for (pallet_nbr, name, pallet_date, customer_name, is_blocked) in c]
+    response.status = 200
+    return format_response({"pallets": res})
+
+
 @post('/block/<cookie_name>/<from_date>/<to_date>')
 def block(cookie_name, from_date, to_date):
     print(cookie_name, from_date, to_date)
