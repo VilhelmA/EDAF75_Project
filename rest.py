@@ -129,8 +129,6 @@ def pallets():
 
     result = c.fetchall()
     print(result)
-    date = datetime.date
-    time = datetime.time
 
     if len(result) < 1:
         print("no such cookie")
@@ -156,13 +154,19 @@ def pallets():
             INSERT
             INTO pallets (bar_code, pallet_time, pallet_date, is_blocked)
             VALUES 	(?, ?, ?, ?)
-            OUTPUT INSERTED.*;
 
-        """, [int(bar_code), str(datetime.datetime.now().time()), str(datetime.datetime.now().date()), 0]
+        """, [int(bar_code), str(datetime.datetime.now().time())[:7], str(datetime.datetime.now().date()), 0]
         )
         print("after exec")
-        print(c.fetchall)
-        return format_response({"status": "OK", })
+        c.execute(
+        """
+            SELECT pallet_nbr 
+            FROM pallets
+            WHERE ROWID = LAST_INSERT_ROWID()
+        """
+        )
+        ret_id = c.fetchall()[0][0]
+        return format_response({"status": "OK", "id": ret_id})
     except sqlite3.IntegrityError as error:
         return (error)
 
