@@ -172,7 +172,23 @@ def pallets():
 
 @get('/pallets')
 def get_pallets():
+    queryDict = request.query
     c = conn.cursor()
+
+    blocked_var =  queryDict.get("blocked")
+    cookie_var =  queryDict.get("cookie")
+    before_var =  queryDict.get("before")
+    after_var =  queryDict.get("after")
+
+    if blocked_var == None:
+        blocked_var = "%"
+    if cookie_var== None:
+        cookie_var = "%"
+    if before_var == None:
+        before_var = "0000-00-00" 
+    if after_var== None:
+        after_var = str(datetime.datetime.now().date())
+
     c.execute(
         """
             SELECT pallet_nbr, name, pallet_date, customer_name, is_blocked 
@@ -181,7 +197,8 @@ def get_pallets():
             USING (bar_code)
             LEFT JOIN orders
             USING (order_id)
-        """
+            WHERE is_blocked LIKE ? AND name LIKE ? AND pallet_date BETWEEN ? AND ? 
+        """, [blocked_var, cookie_var, after_var, before_var]
     )
     res = [{"id": pallet_nbr, "cookie": name, "productionDate": pallet_date, "customer": customer_name, "blocked": is_blocked }
         for (pallet_nbr, name, pallet_date, customer_name, is_blocked) in c]
