@@ -176,7 +176,7 @@ def pallets():
         """
         )
         ret_id = c.fetchall()[0][0]
-        return format_response({"status": "OK", "id": ret_id})
+        return format_response({"status": "ok", "id": ret_id})
     except sqlite3.IntegrityError as error:
         return (error)
 
