@@ -8,22 +8,14 @@ databaseFile = "applications.sqlite"
 resetCode="resetAndInit.txt"
 conn = sqlite3.connect(databaseFile)
 
-@get('/ping')
-def pong():
-    response.content_type = 'text'
-    return ("pong %r" % response.status)
-
 @post('/reset')
 def resetDatabase():
-    print('RESET!')
-    #open(databaseFile, 'w').close()
-    #conn = sqlite3.connect(databaseFile)
     c = conn.cursor()
     data = ""
     with open('resetAndInit.txt', 'r') as myfile:
         data=myfile.read()
-    print(data)
     c.executescript(data)
+    return format_response({"status": "ok"})
 
 @get('/customers')
 def customers():
@@ -78,10 +70,10 @@ def cookies():
         """
         SELECT name
         FROM recipes
-        ORDER BY name DESC
+        ORDER BY name
         """
     )
-    res = [{"name": name}
+    res = [{"name": name[0]}
         for (name) in c]
     response.status = 200
     return format_response({"cookies": res})
@@ -111,14 +103,6 @@ def pallets():
     queryDict = request.query
     c = conn.cursor()
     c.execute('PRAGMA foreign_keys=ON') #needed?
-    # 15 cookies/bag, 10 bags/box,  36 boxes/pallet
-    # c.execute("
-    #     """
-    #     SELECT name
-    #     FROM recipe
-    #
-    #     """)
-
     c.execute(
         """
         SELECT name, bar_code
@@ -128,7 +112,6 @@ def pallets():
         )
 
     result = c.fetchall()
-    print(result)
 
     if len(result) < 1:
         print("no such cookie")
@@ -147,8 +130,36 @@ def pallets():
     ):
         if (row[1] != 1):
             return format_response({"status": "not enough ingredients"})
+    deduct_materials = c.execute(
+        """
+        SELECT  ingredient_name, amount
+        FROM    recipes
+        JOIN    recipe_entries
+        USING   (bar_code)
+        WHERE name = ?
+        """, [queryDict.get('cookie')]
+    ).fetchall()
+    print("before", c.execute(
+    """
+    SELECT  *
+    FROM    raw_materials
+    """
+    ).fetchall())
+    for row in deduct_materials:
+        c.execute(
+        """
+        UPDATE raw_materials
+        SET balance = balance - ?
+        WHERE ingredient_name = ?
+        """, [row[1]*15*10*36/100, row[0]]
+        )
+    print("after", c.execute(
+    """
+    SELECT  *
+    FROM    raw_materials
+    """
+    ).fetchall())
     try:
-        print("before exec")
         c.execute(
         """
             INSERT
@@ -157,10 +168,9 @@ def pallets():
 
         """, [int(bar_code), str(datetime.datetime.now().time())[:7], str(datetime.datetime.now().date()), 0]
         )
-        print("after exec")
         c.execute(
         """
-            SELECT pallet_nbr 
+            SELECT pallet_nbr
             FROM pallets
             WHERE ROWID = LAST_INSERT_ROWID()
         """
@@ -185,19 +195,19 @@ def get_pallets():
     if cookie_var== None:
         cookie_var = "%"
     if before_var == None:
-        before_var = "0000-00-00" 
+        before_var = "0000-00-00"
     if after_var== None:
         after_var = str(datetime.datetime.now().date())
 
     c.execute(
         """
-            SELECT pallet_nbr, name, pallet_date, customer_name, is_blocked 
+            SELECT pallet_nbr, name, pallet_date, customer_name, is_blocked
             FROM pallets
-            JOIN recipes 
+            JOIN recipes
             USING (bar_code)
             LEFT JOIN orders
             USING (order_id)
-            WHERE is_blocked LIKE ? AND name LIKE ? AND pallet_date BETWEEN ? AND ? 
+            WHERE is_blocked LIKE ? AND name LIKE ? AND pallet_date BETWEEN ? AND ?
         """, [blocked_var, cookie_var, after_var, before_var]
     )
     res = [{"id": pallet_nbr, "cookie": name, "productionDate": pallet_date, "customer": customer_name, "blocked": is_blocked }
@@ -251,7 +261,6 @@ def unblock(cookie_name, from_date, to_date):
     """, [cookie_name,from_date, to_date]
     )
     return format_response({"status": "ok"})
-
 
 def url(resource):
     return "http://{HOST}:{PORT}{resource}"
